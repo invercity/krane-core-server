@@ -14,7 +14,7 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const consolidate = require('consolidate');
 
-const config = require('../config');
+const config = require('config');
 
 /**
  * Initialize local variables
@@ -59,8 +59,9 @@ module.exports.initMiddleware = (app) => {
     level: 9
   }));
 
+  // TODO: fill favicon
   // Initialize favicon middleware
-  app.use(favicon(config.favicon));
+  // app.use(favicon(config.favicon));
 
   // Environment dependent middleware
   if (process.env.NODE_ENV === 'development') {
@@ -69,6 +70,7 @@ module.exports.initMiddleware = (app) => {
 
     // Disable views cache
     app.set('view cache', false);
+    // TODO: change to flag
   } else if (process.env.NODE_ENV === 'production') {
     app.locals.cache = 'memory';
   }
