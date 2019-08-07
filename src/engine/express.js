@@ -5,9 +5,9 @@ const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const favicon = require('serve-favicon');
+// const session = require('express-session');
+// const MongoStore = require('connect-mongo')(session);
+// const favicon = require('serve-favicon');
 const compress = require('compression');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
@@ -37,8 +37,8 @@ module.exports.initLocalVariables = (app) => {
 
   // Passing the request url to environment locals
   app.use((req, res, next) => {
-    res.locals.host = req.protocol + '://' + req.hostname;
-    res.locals.url = req.protocol + '://' + req.headers.host + req.originalUrl;
+    res.locals.host = `${req.protocol}://${req.hostname}`;
+    res.locals.url = `${req.protocol}://${req.headers.host}${req.originalUrl}`;
     next();
   });
 };
@@ -100,9 +100,9 @@ module.exports.initViewEngine = (app) => {
 /**
  * Configure Express session
  */
-module.exports.initSession = (app, db) => {
+module.exports.initSession = () => {
   // Express MongoDB session storage
-  app.use(session({
+  /* app.use(session({
     saveUninitialized: true,
     resave: true,
     secret: config.sessionSecret,
@@ -116,14 +116,14 @@ module.exports.initSession = (app, db) => {
       mongooseConnection: db.connection,
       collection: config.sessionCollection
     })
-  }));
+  })); */
 };
 
 /**
  * Invoke modules server configuration
  */
 module.exports.initModulesConfiguration = (app, db) => {
-  config.files.server.configs.forEach((configPath) => require(path.resolve(configPath))(app, db));
+  config.files.server.configs.forEach(configPath => require(path.resolve(configPath))(app, db));
 };
 
 /**
@@ -151,21 +151,21 @@ module.exports.initModulesClientRoutes = (app) => {
   // Setting the app router and static folder
   app.use('/', express.static(path.resolve('./public')));
 
-  //app.use('/sub/:subdomain/', express.static(path.resolve('./public')));
+  // app.use('/sub/:subdomain/', express.static(path.resolve('./public')));
 
   // Globbing static routing
-  config.folders.client.forEach(function (staticPath) {
-    app.use(staticPath, express.static(path.resolve('./' + staticPath)));
-    //app.use('sub/:subdomain/' + staticPath, express.static(path.resolve('./' + staticPath)));
+  config.folders.client.forEach((staticPath) => {
+    app.use(staticPath, express.static(path.resolve(`./${staticPath}`)));
+    // app.use('sub/:subdomain/' + staticPath, express.static(path.resolve('./' + staticPath)));
   });
 };
 
 /**
  * Configure the modules ACL policies
  */
-module.exports.initModulesServerPolicies = (app) => {
+module.exports.initModulesServerPolicies = () => {
   // Globbing policy files
-  config.files.server.policies.forEach((policyPath) => require(path.resolve(policyPath)).invokeRolesPolicies());
+  config.files.server.policies.forEach(policyPath => require(path.resolve(policyPath)).invokeRolesPolicies());
 };
 
 /**
@@ -190,47 +190,48 @@ module.exports.initErrorRoutes = (app) => {
       return next();
     }
 
-    // Log it
+    // TODO: logger
+    /* eslint-disable-next-line no-console */
     console.error(err.stack);
 
     // Redirect to error page
-    res.redirect('/server-error');
+    return res.redirect('/server-error');
   });
 };
 
 /**
  * Initialize the Express application
  */
-module.exports.init = (db) => {
+module.exports.init = () => {
   // Initialize express app
   const app = express();
 
   // Initialize local variables
-  this.initLocalVariables(app);
+  // this.initLocalVariables(app);
 
   // Initialize Express middleware
   this.initMiddleware(app);
 
   // Initialize Express view engine
-  this.initViewEngine(app);
+  // this.initViewEngine(app);
 
   // Initialize Express session
-  this.initSession(app, db);
+  // this.initSession(app, db);
 
   // Initialize Modules configuration
-  this.initModulesConfiguration(app);
+  // this.initModulesConfiguration(app);
 
   // Initialize Helmet security headers
-  this.initHelmetHeaders(app);
+  // this.initHelmetHeaders(app);
 
   // Initialize modules static client routes
-  this.initModulesClientRoutes(app);
+  // this.initModulesClientRoutes(app);
 
   // Initialize modules server authorization policies
-  this.initModulesServerPolicies(app);
+  // this.initModulesServerPolicies(app);
 
   // Initialize modules server routes
-  this.initModulesServerRoutes(app);
+  // this.initModulesServerRoutes(app);
 
   // Initialize error routes
   this.initErrorRoutes(app);
