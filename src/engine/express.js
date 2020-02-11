@@ -123,7 +123,7 @@ module.exports.initSession = () => {
  * Invoke modules server configuration
  */
 module.exports.initModulesConfiguration = (app, db) => {
-  config.files.server.configs.forEach(configPath => require(path.resolve(configPath))(app, db));
+  config.files.server.configs.forEach((configPath) => require(path.resolve(configPath))(app, db));
 };
 
 /**
@@ -165,7 +165,7 @@ module.exports.initModulesClientRoutes = (app) => {
  */
 module.exports.initModulesServerPolicies = () => {
   // Globbing policy files
-  config.files.server.policies.forEach(policyPath => require(path.resolve(policyPath)).invokeRolesPolicies());
+  config.files.server.policies.forEach((policyPath) => require(path.resolve(policyPath)).invokeRolesPolicies());
 };
 
 /**
