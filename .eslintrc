@@ -1,0 +1,19 @@
+{
+  "extends": "airbnb-base",
+  "rules": {
+    "comma-dangle": ["error", "never"],
+    "class-methods-use-this": "off",
+    "global-require": "off",
+    "import/no-dynamic-require": "off",
+    "object-curly-newline": [
+      "error",
+      {
+        "consistent": true,
+        "multiline": true
+      }
+    ],
+    "radix": ["error", "as-needed"],
+    "no-param-reassign": ["error", { "props": false }],
+    "max-len": ["error", { "code": 120, "ignoreComments": true }]
+  }
+}
